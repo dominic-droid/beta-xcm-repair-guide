@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>EPIC Homes — Repair Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --orange:#E85D24;--orange-light:#FFF0EA;--orange-dark:#B84010;
+  --dark:#1A1A1A;--text:#333;--muted:#6B7280;--border:#E5E7EB;
+  --bg:#F8F7F4;--white:#FFFFFF;--green:#16A34A;
+  --font:'Plus Jakarta Sans',sans-serif;
+}
+html,body{height:100%;background:#2A2A2A;display:flex;justify-content:center;align-items:flex-start;font-family:var(--font)}
+#root{width:390px;min-height:100vh;background:var(--bg);position:relative;overflow:hidden;box-shadow:0 0 40px rgba(0,0,0,.4)}
+
+.screen{display:none;flex-direction:column;min-height:100vh;animation:fadeIn .2s ease}
+.screen.active{display:flex}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+.topbar{background:var(--orange);padding:12px 16px;display:flex;align-items:center;gap:10px;flex-shrink:0}
+.topbar-back{color:#fff;font-size:22px;cursor:pointer;width:32px;height:32px;display:flex;align-items:center;justify-content:center;border-radius:8px;transition:background .15s}
+.topbar-back:hover{background:rgba(255,255,255,.15)}
+.topbar-title{color:#fff;font-size:15px;font-weight:600;flex:1;line-height:1.3}
+.lang-btn{background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.3);color:#fff;font-size:11px;font-weight:600;padding:5px 10px;border-radius:20px;cursor:pointer;font-family:var(--font);letter-spacing:.3px}
+
+.hero-wrap{position:relative;width:100%;flex-shrink:0;background:#1a1a1a;overflow:hidden}
+.hero-img{width:100%;height:220px;object-fit:cover;object-position:center 30%;display:block}
+.hero-overlay{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,.1) 0%,rgba(0,0,0,.4) 100%)}
+.hero-tagline{position:absolute;bottom:0;left:0;right:0;padding:12px 16px;color:#fff}
+.hero-tagline h2{font-size:17px;font-weight:700;text-shadow:0 1px 4px rgba(0,0,0,.5)}
+.hero-tagline p{font-size:11px;opacity:.85;margin-top:2px;text-shadow:0 1px 3px rgba(0,0,0,.4)}
+
+.hotspot{position:absolute;cursor:pointer;transform:translate(-50%,-50%);z-index:10}
+.hotspot-ring{width:44px;height:44px;border-radius:50%;background:rgba(0,0,0,.65);border:2.5px solid rgba(255,255,255,.9);display:flex;align-items:center;justify-content:center;transition:all .2s;box-shadow:0 2px 12px rgba(0,0,0,.3)}
+.hotspot:hover .hotspot-ring{background:var(--orange);border-color:#fff;transform:scale(1.12)}
+.hotspot-label{position:absolute;top:50px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.8);color:#fff;font-size:10px;font-weight:600;white-space:nowrap;padding:3px 7px;border-radius:6px;pointer-events:none}
+.hotspot-pulse{position:absolute;width:44px;height:44px;border-radius:50%;border:2px solid rgba(255,255,255,.6);animation:pulse 2s infinite}
+@keyframes pulse{0%{transform:scale(1);opacity:.8}70%{transform:scale(1.7);opacity:0}100%{transform:scale(1.7);opacity:0}}
+
+.section-body{padding:16px;flex:1}
+.section-label{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;margin-bottom:12px}
+
+.home-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px}
+.home-card{background:var(--white);border:1px solid var(--border);border-radius:14px;padding:14px 12px;cursor:pointer;transition:all .15s;text-align:left;width:100%}
+.home-card:hover{border-color:var(--orange);box-shadow:0 2px 12px rgba(232,93,36,.15)}
+.home-card-icon{width:40px;height:40px;background:var(--orange-light);border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:8px;font-size:20px}
+.home-card-title{font-size:13px;font-weight:600;color:var(--dark);line-height:1.3}
+.home-card-sub{font-size:11px;color:var(--muted);margin-top:3px}
+
+.hotline-btn{display:flex;align-items:center;gap:12px;background:var(--white);border:1.5px solid #16A34A;border-radius:14px;padding:14px 16px;cursor:pointer;width:100%;margin-bottom:16px;transition:all .15s}
+.hotline-btn:hover{background:#F0FDF4;box-shadow:0 2px 12px rgba(22,163,74,.15)}
+.hotline-icon{width:40px;height:40px;background:#DCFCE7;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.hotline-text{flex:1}
+.hotline-title{font-size:14px;font-weight:600;color:#15803D}
+.hotline-sub{font-size:11px;color:var(--muted);margin-top:2px}
+.hotline-arrow{font-size:18px;color:#16A34A}
+
+.comp-desc{font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:16px}
+.sub-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+.sub-card{background:var(--white);border:1px solid var(--border);border-radius:14px;overflow:hidden;cursor:pointer;transition:all .15s;width:100%;text-align:left}
+.sub-card:hover{border-color:var(--orange);box-shadow:0 2px 12px rgba(232,93,36,.15);transform:translateY(-1px)}
+.sub-img{width:100%;height:80px;background:#e8eff5;display:flex;align-items:center;justify-content:center;font-size:36px}
+.sub-img.warm{background:#fdf0ea}
+.sub-img.green{background:#e8f5ec}
+.sub-label{padding:10px 10px 12px;font-size:13px;font-weight:600;color:var(--dark);line-height:1.3}
+.sub-label-sub{font-size:11px;color:var(--muted);margin-top:2px;font-weight:400}
+
+.res-section{margin-bottom:20px}
+.res-section-title{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.res-card{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:12px 14px;margin-bottom:8px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:all .15s;text-decoration:none}
+.res-card:hover{border-color:var(--orange);box-shadow:0 2px 8px rgba(232,93,36,.1)}
+.res-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.ri-yt{background:#FEE2E2;color:#DC2626}
+.ri-tt{background:#F3E8FF;color:#7C3AED}
+.ri-gd{background:#DBEAFE;color:#1D4ED8}
+.ri-shop{background:#FEF3C7;color:#D97706}
+.res-text{flex:1}
+.res-title{font-size:13px;font-weight:500;color:var(--dark)}
+.res-meta{font-size:11px;color:var(--muted);margin-top:2px;display:flex;align-items:center;gap:6px}
+.badge{font-size:10px;font-weight:600;padding:2px 7px;border-radius:6px}
+.b-yt{background:#FEE2E2;color:#DC2626}
+.b-tt{background:#F3E8FF;color:#7C3AED}
+.b-gd{background:#DBEAFE;color:#1D4ED8}
+.b-sh{background:#FEF3C7;color:#D97706}
+.res-arrow{font-size:14px;color:var(--muted)}
+
+/* Loading & empty states */
+.loading-state{padding:32px 16px;text-align:center;color:var(--muted);font-size:13px}
+.loading-spinner{width:28px;height:28px;border:3px solid var(--border);border-top-color:var(--orange);border-radius:50%;animation:spin .7s linear infinite;margin:0 auto 12px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.empty-state{padding:24px 16px;text-align:center;color:var(--muted);font-size:13px;background:var(--white);border:1px dashed var(--border);border-radius:12px}
+
+/* Config banner */
+.config-banner{background:#FEF3C7;border:1px solid #FCD34D;border-radius:12px;padding:12px 14px;margin-bottom:16px;font-size:12px;color:#92400E;line-height:1.5}
+.config-banner strong{display:block;margin-bottom:4px}
+</style>
+</head>
+<body>
+<div id="root">
+
+<!-- ==================== SCREEN: HOME ==================== -->
+<div class="screen active" id="s-home">
+  <div class="topbar">
+    <div class="topbar-title">
+      <span class="lang-en">EPIC Homes — Repair Guide</span>
+      <span class="lang-ms" style="display:none">EPIC Homes — Panduan Baik Pulih</span>
+    </div>
+    <button class="lang-btn" onclick="toggleLang()">EN / BM</button>
+  </div>
+
+  <div class="hero-wrap">
+    <img class="hero-img" src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDL/wAARCADIASwDASIAAhEBAxEB/8QAHAABAAIDAQEBAAAAAAAAAAAAAAUGAwQHAgH/xAA4EAABBAEDAgQEBAQGAwAAAAABAAIDBAUREiExBhNBUWEicYGRFDKhscEHI0JSYnLR8BUkM1P/xAAaAQEAAwEBAQAAAAAAAAAAAAAAAgMEBQEG/8QAIxEBAQACAgICAwEAAAAAAAAAAAECEQMhEjFBBCJRYf/aAAwDAQACEQMRAD8A7kiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiD/2Q==" alt="EPIC Homes house">
+    <div class="hero-overlay"></div>
+
+    <div class="hotspot" style="left:87.1%;top:32.7%" onclick="goTo('s-roofings')">
+      <div class="hotspot-pulse"></div>
+      <div class="hotspot-ring">🏠</div>
+      <div class="hotspot-label lang-en" style="left:auto;right:0;transform:translateX(0)">Roof</div>
+      <div class="hotspot-label lang-ms" style="display:none;left:auto;right:0;transform:translateX(0)">Bumbung</div>
+    </div>
+
+    <div class="hotspot" style="left:48.2%;top:30.8%" onclick="goTo('s-wall')">
+      <div class="hotspot-pulse" style="animation-delay:.5s"></div>
+      <div class="hotspot-ring">🪵</div>
+      <div class="hotspot-label lang-en">Wall</div>
+      <div class="hotspot-label lang-ms" style="display:none">Dinding</div>
+    </div>
+
+    <div class="hotspot" style="left:31.2%;top:45.2%" onclick="goTo('s-windows')">
+      <div class="hotspot-pulse" style="animation-delay:1s"></div>
+      <div class="hotspot-ring">🪟</div>
+      <div class="hotspot-label lang-en">Windows</div>
+      <div class="hotspot-label lang-ms" style="display:none">Tingkap</div>
+    </div>
+
+    <div class="hotspot" style="left:58.2%;top:62.5%" onclick="goTo('s-floor')">
+      <div class="hotspot-pulse" style="animation-delay:1.5s"></div>
+      <div class="hotspot-ring">🧱</div>
+      <div class="hotspot-label lang-en">Floor</div>
+      <div class="hotspot-label lang-ms" style="display:none">Lantai</div>
+    </div>
+
+    <div class="hero-tagline">
+      <h2 class="lang-en">Repair, Maintain, Upgrade</h2>
+      <h2 class="lang-ms" style="display:none">Baik Pulih, Jaga, Naik Taraf</h2>
+      <p class="lang-en">Tap a circled part of the house to get started</p>
+      <p class="lang-ms" style="display:none">Ketik bahagian yang ditanda untuk bermula</p>
+    </div>
+  </div>
+
+  <div class="section-body">
+    <button class="hotline-btn" id="hotline-home" onclick="callHotline()">
+      <div class="hotline-icon">📞</div>
+      <div class="hotline-text">
+        <div class="hotline-title lang-en">OA Hotline — Call for Help</div>
+        <div class="hotline-title lang-ms" style="display:none">Talian Bantuan OA</div>
+        <div class="hotline-sub lang-en">Available Mon–Fri, 9am–5pm</div>
+        <div class="hotline-sub lang-ms" style="display:none">Isnin–Jumaat, 9pg–5ptg</div>
+      </div>
+      <div class="hotline-arrow">→</div>
+    </button>
+
+    <div class="section-label lang-en">All sections</div>
+    <div class="section-label lang-ms" style="display:none">Semua bahagian</div>
+    <div class="home-grid" id="home-grid">
+      <button class="home-card" onclick="goTo('s-roofings')">
+        <div class="home-card-icon">🏠</div>
+        <div class="home-card-title lang-en">Roof</div>
+        <div class="home-card-title lang-ms" style="display:none">Bumbung</div>
+        <div class="home-card-sub lang-en" id="roof-count">Loading...</div>
+      </button>
+      <button class="home-card" onclick="goTo('s-wall')">
+        <div class="home-card-icon">🪵</div>
+        <div class="home-card-title lang-en">Wall</div>
+        <div class="home-card-title lang-ms" style="display:none">Dinding</div>
+        <div class="home-card-sub lang-en" id="wall-count">Loading...</div>
+      </button>
+      <button class="home-card" onclick="goTo('s-windows')">
+        <div class="home-card-icon">🪟</div>
+        <div class="home-card-title lang-en">Windows &amp; Doors</div>
+        <div class="home-card-title lang-ms" style="display:none">Tingkap &amp; Pintu</div>
+        <div class="home-card-sub lang-en" id="windows-count">Loading...</div>
+      </button>
+      <button class="home-card" onclick="goTo('s-floor')">
+        <div class="home-card-icon">🧱</div>
+        <div class="home-card-title lang-en">Floor</div>
+        <div class="home-card-title lang-ms" style="display:none">Lantai</div>
+        <div class="home-card-sub lang-en" id="floor-count">Loading...</div>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== SECTION SCREENS ==================== -->
+
+<!-- ROOF -->
+<div class="screen" id="s-roofings">
+  <div class="topbar">
+    <div class="topbar-back" onclick="goBack()">‹</div>
+    <div class="topbar-title lang-en">Roof</div>
+    <div class="topbar-title lang-ms" style="display:none">Bumbung</div>
+    <button class="lang-btn" onclick="toggleLang()">EN / BM</button>
+  </div>
+  <div class="section-body">
+    <p class="comp-desc lang-en">Tap a part to see repair guides and available products.</p>
+    <p class="comp-desc lang-ms" style="display:none">Ketik bahagian untuk panduan baik pulih dan produk.</p>
+    <div class="sub-grid">
+      <button class="sub-card" onclick="goToResource('Roof','Roof sheet')">
+        <div class="sub-img">🏗️</div>
+        <div class="sub-label">
+          <div class="lang-en">Roof sheet</div>
+          <div class="lang-ms" style="display:none">Kepingan bumbung</div>
+          <div class="sub-label-sub lang-en">Zinc, polycarbonate</div>
+          <div class="sub-label-sub lang-ms" style="display:none">Zink, polikarbonat</div>
+        </div>
+      </button>
+      <button class="sub-card" onclick="goToResource('Roof','Roof structure')">
+        <div class="sub-img warm">📐</div>
+        <div class="sub-label">
+          <div class="lang-en">Roof structure</div>
+          <div class="lang-ms" style="display:none">Struktur bumbung</div>
+          <div class="sub-label-sub lang-en">Beams, trusses</div>
+          <div class="sub-label-sub lang-ms" style="display:none">Rasuk, kekuda</div>
+        </div>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- WALL -->
+<div class="screen" id="s-wall">
+  <div class="topbar">
+    <div class="topbar-back" onclick="goBack()">‹</div>
+    <div class="topbar-title lang-en">Wall</div>
+    <div class="topbar-title lang-ms" style="display:none">Dinding</div>
+    <button class="lang-btn" onclick="toggleLang()">EN / BM</button>
+  </div>
+  <div class="section-body">
+    <p class="comp-desc lang-en">Tap a part to see repair guides and available products.</p>
+    <p class="comp-desc lang-ms" style="display:none">Ketik bahagian untuk panduan baik pulih dan produk.</p>
+    <div class="sub-grid">
+      <button class="sub-card" onclick="goToResource('Wall','Wall panel')">
+        <div class="sub-img">🪵</div>
+        <div class="sub-label">
+          <div class="lang-en">Wall panel</div>
+          <div class="lang-ms" style="display:none">Panel dinding</div>
+          <div class="sub-label-sub lang-en">Cladding boards</div>
+          <div class="sub-label-sub lang-ms" style="display:none">Papan penutup</div>
+        </div>
+      </button>
+      <button class="sub-card" onclick="goToResource('Wall','Wall structure')">
+        <div class="sub-img warm">📏</div>
+        <div class="sub-label">
+          <div class="lang-en">Wall structure</div>
+          <div class="lang-ms" style="display:none">Struktur dinding</div>
+          <div class="sub-label-sub lang-en">Posts, frames</div>
+          <div class="sub-label-sub lang-ms" style="display:none">Tiang, rangka</div>
+        </div>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- WINDOWS -->
+<div class="screen" id="s-windows">
+  <div class="topbar">
+    <div class="topbar-back" onclick="goBack()">‹</div>
+    <div class="topbar-title lang-en">Windows &amp; Doors</div>
+    <div class="topbar-title lang-ms" style="display:none">Tingkap &amp; Pintu</div>
+    <button class="lang-btn" onclick="toggleLang()">EN / BM</button>
+  </div>
+  <div class="section-body">
+    <p class="comp-desc lang-en">Tap a fitting type to see installation guides and products.</p>
+    <p class="comp-desc lang-ms" style="display:none">Ketik jenis pemasangan untuk panduan dan produk.</p>
+    <div class="sub-grid">
+      <button class="sub-card" onclick="goToResource('Windows &amp; Doors','Window fittings')">
+        <div class="sub-img">🪟</div>
+        <div class="sub-label">
+          <div class="lang-en">Window fittings</div>
+          <div class="lang-ms" style="display:none">Pemasangan tingkap</div>
+        </div>
+      </button>
+      <button class="sub-card" onclick="goToResource('Windows &amp; Doors','Door fittings')">
+        <div class="sub-img warm">🚪</div>
+        <div class="sub-label">
+          <div class="lang-en">Door fittings</div>
+          <div class="lang-ms" style="display:none">Pemasangan pintu</div>
+        </div>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- FLOOR -->
+<div class="screen" id="s-floor">
+  <div class="topbar">
+    <div class="topbar-back" onclick="goBack()">‹</div>
+    <div class="topbar-title lang-en">Floor</div>
+    <div class="topbar-title lang-ms" style="display:none">Lantai</div>
+    <button class="lang-btn" onclick="toggleLang()">EN / BM</button>
+  </div>
+  <div class="section-body">
+    <p class="comp-desc lang-en">Tap a part to see repair guides and products.</p>
+    <p class="comp-desc lang-ms" style="display:none">Ketik bahagian untuk panduan baik pulih dan produk.</p>
+    <div class="sub-grid">
+      <button class="sub-card" onclick="goToResource('Floor','Floor finishing')">
+        <div class="sub-img green">🪵</div>
+        <div class="sub-label">
+          <div class="lang-en">Floor finishing</div>
+          <div class="lang-ms" style="display:none">Kemasan lantai</div>
+        </div>
+      </button>
+      <button class="sub-card" onclick="goToResource('Floor','Foundation layer')">
+        <div class="sub-img">⬛</div>
+        <div class="sub-label">
+          <div class="lang-en">Foundation layer</div>
+          <div class="lang-ms" style="display:none">Lapisan asas</div>
+        </div>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== DYNAMIC RESOURCE SCREEN ==================== -->
+<div class="screen" id="s-resource">
+  <div class="topbar">
+    <div class="topbar-back" onclick="goBack()">‹</div>
+    <div class="topbar-title" id="resource-title">Resources</div>
+    <button class="lang-btn" onclick="toggleLang()">EN / BM</button>
+  </div>
+  <div class="section-body" id="resource-body">
+    <div class="loading-state">
+      <div class="loading-spinner"></div>
+      <span class="lang-en">Loading resources...</span>
+      <span class="lang-ms" style="display:none">Memuatkan...</span>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<script>
+// ============================================================
+// CONFIGURATION — PASTE YOUR GOOGLE SHEET CSV URL BELOW
+// Steps: In your Google Sheet go to File > Share > Publish to web
+// Select Sheet1 and CSV format, then paste the URL here
+// ============================================================
+var SHEET_CSV_URL = 'YOUR_GOOGLE_SHEET_CSV_URL_HERE';
+
+// ============================================================
+// HOTLINE NUMBER — REPLACE WITH REAL NUMBER
+// ============================================================
+var HOTLINE_NUMBER = '1800-XXX-XXX';
+
+// ============================================================
+// APP LOGIC — DO NOT EDIT BELOW THIS LINE
+// ============================================================
+
+var navHistory = [];
+var current = 's-home';
+var isMalay = false;
+var sheetData = [];
+var dataLoaded = false;
+
+// Navigation
+function goTo(id) {
+  document.getElementById(current).classList.remove('active');
+  navHistory.push(current);
+  current = id;
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+function goBack() {
+  if (navHistory.length === 0) return;
+  document.getElementById(current).classList.remove('active');
+  current = navHistory.pop();
+  document.getElementById(current).classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+function toggleLang() {
+  isMalay = !isMalay;
+  document.querySelectorAll('.lang-en').forEach(function(el) {
+    el.style.display = isMalay ? 'none' : '';
+  });
+  document.querySelectorAll('.lang-ms').forEach(function(el) {
+    el.style.display = isMalay ? '' : 'none';
+  });
+}
+
+function callHotline() {
+  window.location.href = 'tel:' + HOTLINE_NUMBER.replace(/[^0-9+]/g, '');
+}
+
+// Navigate to dynamic resource screen
+function goToResource(section, subcomponent) {
+  var decoded = section.replace(/&amp;/g, '&');
+  renderResourceScreen(decoded, subcomponent);
+  goTo('s-resource');
+}
+
+// Parse CSV text into array of objects
+function parseCSV(text) {
+  var lines = text.trim().split('\n');
+  if (lines.length < 2) return [];
+  var headers = lines[0].split(',').map(function(h) { return h.trim().replace(/^"|"$/g, ''); });
+  var rows = [];
+  for (var i = 1; i < lines.length; i++) {
+    var cols = splitCSVLine(lines[i]);
+    if (cols.length < 2) continue;
+    var row = {};
+    headers.forEach(function(h, idx) {
+      row[h] = (cols[idx] || '').trim().replace(/^"|"$/g, '');
+    });
+    rows.push(row);
+  }
+  return rows;
+}
+
+function splitCSVLine(line) {
+  var result = [];
+  var current = '';
+  var inQuotes = false;
+  for (var i = 0; i < line.length; i++) {
+    var c = line[i];
+    if (c === '"') { inQuotes = !inQuotes; }
+    else if (c === ',' && !inQuotes) { result.push(current); current = ''; }
+    else { current += c; }
+  }
+  result.push(current);
+  return result;
+}
+
+// Platform icon and badge helpers
+function getPlatformIcon(platform) {
+  var p = (platform || '').toLowerCase();
+  if (p === 'youtube') return { cls: 'ri-yt', icon: '▶', badge: 'b-yt' };
+  if (p === 'tiktok') return { cls: 'ri-tt', icon: '♪', badge: 'b-tt' };
+  if (p === 'google drive') return { cls: 'ri-gd', icon: '📄', badge: 'b-gd' };
+  if (p === 'shopify') return { cls: 'ri-shop', icon: '📦', badge: 'b-sh' };
+  return { cls: 'ri-gd', icon: '🔗', badge: 'b-gd' };
+}
+
+function getResourceTypeLabel(type, isBM) {
+  var t = (type || '').toLowerCase();
+  if (t === 'video') return isBM ? '▶ Panduan video' : '▶ Video guides';
+  if (t === 'guide') return isBM ? '📄 Panduan bergambar' : '📄 Pictorial guides';
+  if (t === 'product') return isBM ? '🛒 Produk kami' : '🛒 Products we carry';
+  return '🔗 Resources';
+}
+
+// Render the dynamic resource screen
+function renderResourceScreen(section, subcomponent) {
+  document.getElementById('resource-title').textContent = subcomponent;
+
+  var body = document.getElementById('resource-body');
+
+  if (!dataLoaded) {
+    body.innerHTML = '<div class="loading-state"><div class="loading-spinner"></div><span>Loading resources...</span></div>';
+    return;
+  }
+
+  // Filter rows for this section + subcomponent
+  var rows = sheetData.filter(function(r) {
+    return r['Section'] === section && r['Sub-component'] === subcomponent;
+  });
+
+  if (rows.length === 0) {
+    body.innerHTML = buildEmptyState() + buildHotlineHTML();
+    return;
+  }
+
+  // Group by Resource Type
+  var groups = {};
+  rows.forEach(function(r) {
+    var t = r['Resource Type'] || 'Other';
+    if (!groups[t]) groups[t] = [];
+    groups[t].push(r);
+  });
+
+  var html = '';
+
+  // Show config banner if sheet not connected yet
+  if (SHEET_CSV_URL === 'YOUR_GOOGLE_SHEET_CSV_URL_HERE') {
+    html += '<div class="config-banner"><strong>Staff: Sheet not connected yet</strong>Paste your Google Sheet CSV URL into the SHEET_CSV_URL variable in the code to load live content.</div>';
+  }
+
+  var typeOrder = ['Video', 'Guide', 'Product'];
+  typeOrder.forEach(function(type) {
+    if (!groups[type]) return;
+    html += '<div class="res-section">';
+    html += '<div class="res-section-title">' + getResourceTypeLabel(type, isMalay) + '</div>';
+    groups[type].forEach(function(r) {
+      var p = getPlatformIcon(r['Platform']);
+      var title = (isMalay && r['Title BM']) ? r['Title BM'] : r['Title EN'];
+      var link = r['Link'] || '#';
+      html += '<a class="res-card" href="' + link + '" target="_blank" rel="noopener">';
+      html += '<div class="res-icon ' + p.cls + '">' + p.icon + '</div>';
+      html += '<div class="res-text">';
+      html += '<div class="res-title">' + (title || 'Untitled') + '</div>';
+      html += '<div class="res-meta"><span class="badge ' + p.badge + '">' + (r['Platform'] || '') + '</span></div>';
+      html += '</div>';
+      html += '<div class="res-arrow">↗</div>';
+      html += '</a>';
+    });
+    html += '</div>';
+  });
+
+  html += buildHotlineHTML();
+  body.innerHTML = html;
+}
+
+function buildHotlineHTML() {
+  return '<button class="hotline-btn" onclick="callHotline()">' +
+    '<div class="hotline-icon">📞</div>' +
+    '<div class="hotline-text">' +
+    '<div class="hotline-title lang-en">Need help? Call the OA Hotline</div>' +
+    '<div class="hotline-title lang-ms" style="display:' + (isMalay ? '' : 'none') + '">Perlukan bantuan? Hubungi Talian OA</div>' +
+    '</div>' +
+    '<div class="hotline-arrow">→</div>' +
+    '</button>';
+}
+
+function buildEmptyState() {
+  return '<div class="empty-state">' +
+    '<span class="lang-en">No resources added yet for this section.</span>' +
+    '<span class="lang-ms" style="display:none">Tiada sumber ditambah lagi.</span>' +
+    '</div>';
+}
+
+// Update resource counts on home screen
+function updateCounts() {
+  var sections = {
+    'Roof': 'roof-count',
+    'Wall': 'wall-count',
+    'Windows & Doors': 'windows-count',
+    'Floor': 'floor-count'
+  };
+  Object.keys(sections).forEach(function(sec) {
+    var count = sheetData.filter(function(r) { return r['Section'] === sec; }).length;
+    var el = document.getElementById(sections[sec]);
+    if (el) el.textContent = count + (count === 1 ? ' resource' : ' resources');
+  });
+}
+
+// Load data from Google Sheet
+function loadSheetData() {
+  if (SHEET_CSV_URL === 'YOUR_GOOGLE_SHEET_CSV_URL_HERE') {
+    dataLoaded = true;
+    updateCounts();
+    return;
+  }
+
+  fetch(SHEET_CSV_URL)
+    .then(function(res) { return res.text(); })
+    .then(function(text) {
+      sheetData = parseCSV(text);
+      dataLoaded = true;
+      updateCounts();
+    })
+    .catch(function(err) {
+      console.error('Could not load sheet data:', err);
+      dataLoaded = true;
+      updateCounts();
+    });
+}
+
+// Initialise
+window.addEventListener('DOMContentLoaded', function() {
+  loadSheetData();
+});
+</script>
+</body>
+</html>
