@@ -267,10 +267,21 @@ function updateCounts(){
   });
 }
 function loadSheetData(){
-  fetch(APPS_SCRIPT_URL)
-    .then(function(res){return res.json();})
-    .then(function(data){sheetData=data;dataLoaded=true;updateCounts();})
-    .catch(function(err){console.error('Failed:',err);dataLoaded=true;updateCounts();});
+  var url = APPS_SCRIPT_URL + '?callback=handleData';
+  var script = document.createElement('script');
+  script.src = url;
+  document.body.appendChild(script);
+  setTimeout(function(){
+    if(!dataLoaded){
+      dataLoaded=true;
+      updateCounts();
+    }
+  }, 5000);
+}
+function handleData(data){
+  sheetData = data;
+  dataLoaded = true;
+  updateCounts();
 }
 function switchTab(name){
   document.querySelectorAll('.tab-btn').forEach(function(b){
