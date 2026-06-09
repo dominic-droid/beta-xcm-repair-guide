@@ -12,7 +12,7 @@ var dataLoaded = false;
 var APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzvLHPtlr8LpOWx_jJrh_-VTltY0J85zMWq4wK_aOXol20L7KkTyjZTC7jjDB7ZpkKB/exec';
 var SHEET_EDIT_URL  = 'https://docs.google.com/spreadsheets/d/1lvZr2VdXWYcdZzr5o20qDTBp0UdDNAOo93tRE5c_B44/edit';
 var HOTLINE_NUMBER  = '019-755-1617';
-var WHATSAPP_MESSAGE = 'Hi, I need help with my EPIC Homes repair. Can you assist?';
+var WHATSAPP_MSG_EN = 'Hi, I need help with my EPIC Homes repair. Can you assist?';
 var WHATSAPP_MSG_MS = 'Hi, saya perlukan bantuan untuk baik pulih rumah EPIC Homes saya. Boleh bantu?';
 
 function goTo(id) {
