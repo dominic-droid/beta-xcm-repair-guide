@@ -148,7 +148,6 @@ function loadSheetData() {
       document.head.appendChild(script);
       setTimeout(function(){ if (!dataLoaded){ dataLoaded = true; updateCounts(); } }, 8000);
     });
-likli
 
 function handleData(data) {
   sheetData = data;
