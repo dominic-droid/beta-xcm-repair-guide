@@ -127,6 +127,29 @@ function buildResCard(r){
     +'<div class="res-arrow">&#8599;</div></a>';
 }
 
+function updateCounts() {
+  var map = {'Roof':'roof-count','Wall':'wall-count','Windows & Doors':'windows-count','Floor':'floor-count'};
+  Object.keys(map).forEach(function(sec) {
+    var count = sheetData.filter(function(r){ return r['Section'] === sec; }).length;
+    var el = document.getElementById(map[sec]);
+    if (el) el.textContent = count > 0 ? count + ' resource' + (count === 1 ? '' : 's') : 'Tap to view';
+  });
+}
+
+function loadSheetData() {
+  fetch(APPS_SCRIPT_URL + '?t=' + Date.now())
+    .then(function(res){ return res.json(); })
+    .then(function(data){ sheetData = data; dataLoaded = true; updateCounts(); })
+    .catch(function() {
+      var script = document.createElement('script');
+      script.src = APPS_SCRIPT_URL + '?callback=handleData&t=' + Date.now();
+      script.onload = function(){ if (document.head.contains(script)) document.head.removeChild(script); };
+      script.onerror = function(){ dataLoaded = true; updateCounts(); };
+      document.head.appendChild(script);
+      setTimeout(function(){ if (!dataLoaded){ dataLoaded = true; updateCounts(); } }, 8000);
+    });
+likli
+
 function handleData(data) {
   sheetData = data;
   dataLoaded = true;
