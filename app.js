@@ -74,61 +74,57 @@ function goToResource(section, subcomponent) {
   goTo('s-resource');
 }
 
-function renderResourceScreen(section, subcomponent) {
-  document.getElementById('resource-title').textContent = subcomponent;
-  var body = document.getElementById('resource-body');
-  if (!dataLoaded) {
-    body.innerHTML = '<div class="loading-state"><div class="loading-spinner"></div><span>Loading...</span></div>';
-    return;
+function renderResourceScreen(section,subcomponent){
+  document.getElementById('resource-title').textContent=subcomponent;
+  var body=document.getElementById('resource-body');
+  if(!dataLoaded){body.innerHTML='<div class="loading-state"><div class="loading-spinner"></div><span>Loading...</span></div>';return;}
+  var rows=sheetData.filter(function(r){return r['Section']===section&&r['Sub-component']===subcomponent;});
+  var products=rows.filter(function(r){return(r['Resource Type']||'').toLowerCase()==='product';});
+  var videos=rows.filter(function(r){return(r['Resource Type']||'').toLowerCase()==='video';});
+  var guides=rows.filter(function(r){return(r['Resource Type']||'').toLowerCase()==='guide';});
+  var pc='';
+  if(products.length===0){pc='<div class="empty-state">No products added yet</div>';}
+  else{products.forEach(function(r){pc+=buildResCard(r);});}
+  var gc='';
+  if(videos.length===0&&guides.length===0){gc='<div class="empty-state">No guides added yet</div>';}
+  else{
+    if(videos.length>0){gc+='<div style="font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px">Video guides</div>';videos.forEach(function(r){gc+=buildResCard(r);});}
+    if(guides.length>0){gc+='<div style="font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;margin:8px 0 6px">Pictorial guides</div>';guides.forEach(function(r){gc+=buildResCard(r);});}
   }
-  var rows = sheetData.filter(function(r){ return r['Section'] === section && r['Sub-component'] === subcomponent; });
-  if (rows.length === 0) {
-    body.innerHTML = '<div class="empty-state">' + (isMalay ? 'Tiada sumber ditambah lagi.' : 'No resources added yet for this section.') + '</div>' + buildHotline();
-    return;
-  }
-  var groups = {};
-  rows.forEach(function(r){ var t = r['Resource Type'] || 'Other'; if (!groups[t]) groups[t] = []; groups[t].push(r); });
-  var html = '';
-  ['Video', 'Guide', 'Product'].forEach(function(type) {
-    if (!groups[type]) return;
-    html += '<div class="res-section"><div class="res-section-title">' + getTypeLabel(type) + '</div>';
-    groups[type].forEach(function(r) {
-      var p = getPlatformIcon(r['Platform']);
-      var title = (isMalay && r['Title BM']) ? r['Title BM'] : r['Title EN'];
-      var link = r['Link'] || '#';
-      html += '<a class="res-card" href="' + link + '" target="_blank" rel="noopener">'
-        + '<div class="res-icon ' + p.cls + '">' + p.icon + '</div>'
-        + '<div class="res-text"><div class="res-title">' + (title || 'Untitled') + '</div>'
-        + '<div class="res-meta"><span class="badge ' + p.badge + '">' + (r['Platform'] || '') + '</span></div></div>'
-        + '<div class="res-arrow">&#8599;</div></a>';
-    });
-    html += '</div>';
-  });
-  html += buildHotline();
-  body.innerHTML = html;
+  var html='<div style="display:flex;gap:6px;margin-bottom:14px">'
+    +'<button style="flex:1;background:var(--orange);color:#fff;border:none;border-radius:10px;padding:9px;font-size:12px;font-weight:600;cursor:pointer;font-family:var(--font)" id="rtb-p" onclick="switchResTab(&quot;products&quot;)">Products</button>'
+    +'<button style="flex:1;background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:9px;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer;font-family:var(--font)" id="rtb-g" onclick="switchResTab(&quot;guides&quot;)">How-to guides</button>'
+    +'</div>'
+    +'<div id="rtp-p">'+pc+buildHotline()+'</div>'
+    +'<div id="rtp-g" style="display:none">'+gc+buildHotline()+'</div>';
+  body.innerHTML=html;
 }
 
-function updateCounts() {
-  var map = {'Roof':'roof-count','Wall':'wall-count','Windows & Doors':'windows-count','Floor':'floor-count'};
-  Object.keys(map).forEach(function(sec) {
-    var count = sheetData.filter(function(r){ return r['Section'] === sec; }).length;
-    var el = document.getElementById(map[sec]);
-    if (el) el.textContent = count > 0 ? count + ' resource' + (count === 1 ? '' : 's') : 'Tap to view';
-  });
+function switchResTab(name){
+  var isProducts=name==='products';
+  var btnP=document.getElementById('rtb-p');
+  var btnG=document.getElementById('rtb-g');
+  var paneP=document.getElementById('rtp-p');
+  var paneG=document.getElementById('rtp-g');
+  btnP.style.background=isProducts?'var(--orange)':'var(--bg)';
+  btnP.style.color=isProducts?'#fff':'var(--muted)';
+  btnP.style.border=isProducts?'none':'1px solid var(--border)';
+  btnG.style.background=isProducts?'var(--bg)':'var(--orange)';
+  btnG.style.color=isProducts?'var(--muted)':'#fff';
+  btnG.style.border=isProducts?'1px solid var(--border)':'none';
+  paneP.style.display=isProducts?'block':'none';
+  paneG.style.display=isProducts?'none':'block';
 }
 
-function loadSheetData() {
-  fetch(APPS_SCRIPT_URL + '?t=' + Date.now())
-    .then(function(res){ return res.json(); })
-    .then(function(data){ sheetData = data; dataLoaded = true; updateCounts(); })
-    .catch(function() {
-      var script = document.createElement('script');
-      script.src = APPS_SCRIPT_URL + '?callback=handleData&t=' + Date.now();
-      script.onload = function(){ if (document.head.contains(script)) document.head.removeChild(script); };
-      script.onerror = function(){ dataLoaded = true; updateCounts(); };
-      document.head.appendChild(script);
-      setTimeout(function(){ if (!dataLoaded){ dataLoaded = true; updateCounts(); } }, 8000);
-    });
+function buildResCard(r){
+  var p=getPlatformIcon(r['Platform']);
+  var title=(isMalay&&r['Title BM'])?r['Title BM']:r['Title EN'];
+  var link=r['Link']||'#';
+  return '<a class="res-card" href="'+link+'" target="_blank" rel="noopener">'
+    +'<div class="res-icon '+p.cls+'">'+p.icon+'</div>'
+    +'<div class="res-text"><div class="res-title">'+(title||'Untitled')+'</div>'
+    +'<div class="res-meta"><span class="badge '+p.badge+'">'+(r['Platform']||'')+'</span></div></div>'
+    +'<div class="res-arrow">&#8599;</div></a>';
 }
 
 function handleData(data) {
