@@ -92,8 +92,8 @@ function renderResourceScreen(section,subcomponent){
     if(guides.length>0){gc+='<div style="font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;margin:8px 0 6px">Pictorial guides</div>';guides.forEach(function(r){gc+=buildResCard(r);});}
   }
   var html='<div style="display:flex;gap:6px;margin-bottom:14px">'
-    +'<button style="flex:1;background:var(--orange);color:#fff;border:none;border-radius:10px;padding:9px;font-size:12px;font-weight:600;cursor:pointer;font-family:var(--font)" id="rtb-p" onclick="switchResTab(&quot;products&quot;)">Products</button>'
-    +'<button style="flex:1;background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:9px;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer;font-family:var(--font)" id="rtb-g" onclick="switchResTab(&quot;guides&quot;)">How-to guides</button>'
+    +'<button style="flex:1;background:var(--orange);color:#fff;border:none;border-radius:10px;padding:9px;font-size:12px;font-weight:600;cursor:pointer;font-family:var(--font)" id="rtb-p" onclick="switchResTab(\'products\')">Products</button>'
+    +'<button style="flex:1;background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:9px;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer;font-family:var(--font)" id="rtb-g" onclick="switchResTab(\'guides\')">How-to guides</button>'
     +'</div>'
     +'<div id="rtp-p">'+pc+buildHotline()+'</div>'
     +'<div id="rtp-g" style="display:none">'+gc+buildHotline()+'</div>';
@@ -148,6 +148,7 @@ function loadSheetData() {
       document.head.appendChild(script);
       setTimeout(function(){ if (!dataLoaded){ dataLoaded = true; updateCounts(); } }, 8000);
     });
+}
 
 function handleData(data) {
   sheetData = data;
@@ -158,7 +159,7 @@ function handleData(data) {
 // Admin functions
 function switchTab(name) {
   document.querySelectorAll('.tab-btn').forEach(function(b) {
-    var m = b.getAttribute('onclick').match(/switchTab\('([^']+)'/);
+    var m = b.getAttribute('onclick').match(/switchTab\(['"]([^'"]+)['"]/);
     if (m) b.classList.toggle('active', m[1] === name);
   });
   document.querySelectorAll('.tab-content').forEach(function(c) {
